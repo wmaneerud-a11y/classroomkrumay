@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Room Kru May 2/2569</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --warning: #d97706;
+            --bg-slate: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #f1f5f9; color: var(--text-dark); padding-bottom: 40px; }
+        
+        /* Header */
+        header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 24px 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        header h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+        header p { font-size: 14px; opacity: 0.9; line-height: 1.5; }
+        
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 16px; }
+        
+        /* Nav / Mode Selector */
+        .mode-switch { display: flex; background: #e2e8f0; border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+        .mode-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted); }
+        .mode-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        /* Card Style */
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid var(--border); }
+        .card-title { font-size: 18px; font-weight: bold; margin-bottom: 16px; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Forms */
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #334155; }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        
+        /* Buttons */
+        .btn { padding: 10px 18px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-success { background: var(--success); color: white; }
+        
+        /* Tabs */
+        .tabs { display: flex; gap: 8px; border-bottom: 2px solid var(--border); margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
+        .tab-btn { padding: 10px 16px; border: none; background: none; font-weight: 600; font-size: 14px; color: var(--text-muted); cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -6px; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        
+        /* Tables */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+        th { background-color: #f8fafc; font-weight: 600; color: #475569; }
+        tr:hover { background-color: #f8fafc; }
+        
+        /* Status Badges */
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
+        .badge-success { background: #dcfce7; color: #16a34a; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        
+        /* Modal & Alert */
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #15803d; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 1000; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .pin-box { max-width: 360px; margin: 40px auto; text-align: center; }
+        .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 10px; }
+        .preview-item { width: 100%; height: 80px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">✓ บันทึกข้อมูลเสร็จสิ้นแล้ว!</div>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Class Room Kru May 2/2569</h1>
+        <p>ผู้สอน: นางสาวมณีรัตน์ วรรณศรี | แผนกวิชาช่างกลโรงงาน</p>
+        <p>วิทยาลัยการอาชีพบ้านผือ ภาคเรียนที่ 2/2569</p>
+    </header>
+
+    <div class="container">
+        <!-- Mode Switcher -->
+        <div class="mode-switch">
+            <button class="mode-btn active" id="btn-mode-student" onclick="switchMode('student')">👨‍🎓 โหมดผู้เรียน</button>
+            <button class="mode-btn" id="btn-mode-teacher" onclick="switchMode('teacher')">👩‍🏫 โหมดครูผู้สอน</button>
+        </div>
+
+        <!-- ================= STUDENT MODE ================= -->
+        <div id="student-view">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchStudentTab('submit')">📤 ส่งการบ้าน/ใบงาน</button>
+                <button class="tab-btn" onclick="switchStudentTab('summary')">📊 สรุปการส่งงานและการเข้าเรียนของฉัน</button>
+            </div>
+
+            <!-- Student Tab 1: Submit Work -->
+            <div id="student-tab-submit" class="card">
+                <div class="card-title">ส่งงานและใบงาน</div>
+                <form id="student-submit-form" onsubmit="handleStudentSubmit(event)">
+                    <div class="form-group">
+                        <label>1. เลือกรายวิชา</label>
+                        <select id="std-subject" class="form-control" onchange="updateAssignmentList()" required>
+                            <option value="">-- กรุณาเลือกรายวิชา --</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>2. เลือกกลุ่มเรียน</label>
+                            <select id="std-group" class="form-control" onchange="updateStudentList()" required>
+                                <option value="">-- เลือกกลุ่มเรียน --</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>3. เลือกชื่อนักเรียน</label>
+                            <select id="std-name" class="form-control" required>
+                                <option value="">-- เลือกกลุ่มเรียนก่อน --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>4. เลือกใบงาน/การบ้าน</label>
+                        <select id="std-assignment" class="form-control" required>
+                            <option value="">-- เลือกรายวิชาก่อน --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>5. แนบไฟล์งาน (PDF หรือ รูปภาพ สูงสุด 15 ไฟล์)</label>
+                        <input type="file" id="std-files" class="form-control" accept="image/*,application/pdf" multiple onchange="handleFilePreview(event)">
+                        <div id="file-count" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">แนบแล้ว 0 / 15 ไฟล์</div>
+                        <div id="preview-container" class="preview-grid"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px;">📤 ยืนยันการส่งงาน</button>
+                </form>
+            </div>
+
+            <!-- Student Tab 2: My Summary -->
+            <div id="student-tab-summary" class="card" style="display: none;">
+                <div class="card-title">ตรวจสอบประวัติของฉัน</div>
+                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                    <select id="chk-group" class="form-control" style="flex: 1;" onchange="updateCheckStudentList()">
+                        <option value="">-- เลือกกลุ่มเรียน --</option>
+                    </select>
+                    <select id="chk-student" class="form-control" style="flex: 1;" onchange="renderStudentPersonalSummary()">
+                        <option value="">-- เลือกชื่อนักเรียน --</option>
+                    </select>
+                </div>
+
+                <div id="personal-summary-result">
+                    <p style="text-align: center; color: var(--text-muted); padding: 20px;">กรุณาเลือกกลุ่มเรียนและชื่อเพื่อดูข้อมูล</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TEACHER MODE ================= -->
+        <div id="teacher-view" style="display: none;">
+            <!-- PIN Auth Box -->
+            <div id="teacher-auth" class="card pin-box">
+                <div class="card-title" style="justify-content: center;">🔒 ยืนยันตัวตนครูผู้สอน</div>
+                <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งานโหมดครูผู้สอน</p>
+                <input type="password" id="teacher-pin" class="form-control" placeholder="กรอกรหัสผ่าน 4 หลัก" style="text-align: center; font-size: 18px; letter-spacing: 4px; margin-bottom: 12px;">
+                <button class="btn btn-primary" style="width: 100%;" onclick="verifyPin()">ยืนยันรหัสผ่าน</button>
+            </div>
+
+            <!-- Main Teacher Panel -->
+            <div id="teacher-panel" style="display: none;">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTeacherTab('grading')">📝 ตรวจงาน/ให้คะแนน</button>
+                    <button class="tab-btn" onclick="switchTeacherTab('attendance')">🗓️ เช็คชื่อเข้าเรียน</button>
+                    <button class="tab-btn" onclick="switchTeacherTab('manage')">⚙️ จัดการการบ้าน/ใบงาน</button>
+                    <button class="tab-btn" onclick="switchTeacherTab('report')">📈 สรุปเข้าเรียน & เตือนขาดสอบ</button>
+                </div>
+
+                <!-- Teacher Tab 1: Grading -->
+                <div id="teacher-tab-grading" class="card">
+                    <div class="card-title">ตรวจงานและบันทึกคะแนน</div>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                        <select id="grade-subject" class="form-control" onchange="renderGradingTable()">
+                            <!-- Subject Options -->
+                        </select>
+                        <select id="grade-group" class="form-control" onchange="renderGradingTable()">
+                            <!-- Group Options -->
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>นักเรียน</th>
+                                    <th>ใบงาน</th>
+                                    <th>ไฟล์แนบ</th>
+                                    <th>เวลาส่ง</th>
+                                    <th>คะแนน</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="grading-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">ไม่พบข้อมูลการส่งงาน</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Teacher Tab 2: Attendance -->
+                <div id="teacher-tab-attendance" class="card" style="display: none;">
+                    <div class="card-title">บันทึกการเข้าเรียน</div>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                        <input type="date" id="att-date" class="form-control" style="width: auto;">
+                        <select id="att-subject" class="form-control" style="flex: 1;">
+                            <!-- Subjects -->
+                        </select>
+                        <select id="att-group" class="form-control" style="flex: 1;" onchange="renderAttendanceTable()">
+                            <!-- Groups -->
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>เลขที่</th>
+                                    <th>ชื่อ-สกุล</th>
+                                    <th>สถานะการเข้าเรียน</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-tbody">
+                                <!-- Attendance List -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-success" style="margin-top: 16px; width: 100%; padding: 12px;" onclick="saveAttendance()">💾 บันทึกการเช็คชื่อ (ขึ้นเตือนเสร็จสิ้นแล้ว)</button>
+                </div>
+
+                <!-- Teacher Tab 3: Manage Assignments -->
+                <div id="teacher-tab-manage" class="card" style="display: none;">
+                    <div class="card-title">เพิ่ม/ลบ ใบงานและทำการบ้าน</div>
+                    
+                    <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 12px;">➕ เพิ่มใบงานใหม่</h4>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                            <select id="add-assign-subject" class="form-control"></select>
+                            <input type="text" id="add-assign-title" class="form-control" placeholder="ชื่อใบงาน / การบ้าน">
+                            <input type="number" id="add-assign-score" class="form-control" placeholder="คะแนนเต็ม" value="10">
+                        </div>
+                        <button class="btn btn-primary" onclick="addNewAssignment()">+ เพิ่มใบงานใหม่</button>
+                    </div>
+
+                    <div class="card-title">รายการใบงานปัจจุบัน</div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>รายวิชา</th>
+                                    <th>ชื่อใบงาน</th>
+                                    <th>คะแนนเต็ม</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignment-manage-tbody">
+                                <!-- Dynamic List -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Teacher Tab 4: Summary & Absence Alert -->
+                <div id="teacher-tab-report" class="card" style="display: none;">
+                    <div class="card-title">
+                        <span>สรุปการเข้าเรียน & สิทธิ์สอบ (>20% ขาดสอบ)</span>
+                        <button class="btn btn-primary" onclick="window.print()">🖨️ พิมพ์รายงาน PDF</button>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                        <select id="report-subject" class="form-control" onchange="renderReportTable()">
+                            <!-- Subjects -->
+                        </select>
+                        <select id="report-group" class="form-control" onchange="renderReportTable()">
+                            <!-- Groups -->
+                        </select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>เลขที่</th>
+                                    <th>ชื่อ-สกุล</th>
+                                    <th>มา (ครั้ง)</th>
+                                    <th>ขาด (ครั้ง)</th>
+                                    <th>% การขาดเรียน</th>
+                                    <th>สิทธิ์สอบ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-tbody">
+                                <!-- Attendance Summary -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA & LOGIC -->
+    <script>
+        // Database Initialization
+        const subjects = [
+            "20100-1007 งานนิวแมติกส์และไฮดรอลิกส์เบื้องต้น",
+            "20102-2002 เขียนแบบด้วยโปรแกรมคอมพิวเตอร์",
+            "20102-2010 ลับคมเครื่องมือตัด",
+            "20102-2036 เขียนแบบชิ้นส่วนยานยนต์",
+            "20110-2004 การเขียนแบบชิ้นส่วนเครื่องจักรกลด้วยคอมพิวเตอร์",
+            "30000-2006 กิจกรรมในสถานประกอบการ 2",
+            "30001-1003 การประยุกต์ใช้เทคโนโลยีดิจิทัลในอาชีพ",
+            "30100-0001 งานเทคนิคเบื้องต้น",
+            "30100-1015 ความแข็งแรงของวัสดุ",
+            "30102-2012 เทคนิคการผลิตชิ้นส่วนด้วยเครื่องมือกล 4"
+        ];
+
+        const studentGroups = {
+            "ชก.1/1": ["กานต์ญาพัชร พรหมมา", "กิตติ์ณัฏฐกร จูลนันท์", "กุลเกียรติ คำดี", "จักรกรุช ฉลวยศรี", "ชินวุฒิ เรืองจันทร์", "ทินภัทร พิมพ์ศาล", "ธนสิษฐ์ จันดาแพง", "ธนวัฒน์ โปะประนม", "นพภัทร ปราณี", "นภัสกร จันสมุทร", "บัญชา คำเจริญ", "ธนกร จันสมุทร", "พรพิทักษ์ ศรีบุญทัย", "พัสกร โบราณกุล", "พัสวี พรมชาติ", "ภูริณัฐ หาเสอดส่อง", "ยศกร วะชุม", "วรโชติ ทองธรรมชัย", "วัชรพงษ์ ทองอ่อน", "วัชรพล นามดี", "วิทวัฒน์ ไม้ดา", "ปณชัย ภูชุม", "วรัญชิต พิมพงษ์", "ธนวัฒน์ สิงห์ศรีชัย"],
+            "ชก.2/1": ["กรวิทย์ สาระสิทธิ์", "ก้องเกียรติ เชื่อกลางใหญ่", "ณัฐพงษ์ บุญหลาย", "ณัฐพล พรมพุทธา", "ณิชาภรณ์ บุญเรื่อง", "ธนาดล ชาวศิโร", "ธเนศ สายพรม", "นพวิชญ์ ฤทธิ์อินทร์", "นรากรณ์ วงศ์เทพ", "บดินทร์ สุขแสวง", "ปรีชานนท์ ทิพชัย", "ปิยะวุฒิ ใจหาญ", "พัทวัส ดุลบดี", "ภัทรพล ดี", "วรเมธ วงศ์ศรีแก้ว", "วีรภัทร โชคบุญมา", "สิรภพ สนิทปะโค", "กฤตทัศ มีชัย", "ณิชาพัทธ์ แก่นท้าว", "ธนกฤต ขาวคร"],
+            "ชก.3/1": ["กรวิชญ์ สีปานแก้ว", "กิตติพงศ์ สุนนท์ดง", "เกตตะวัน หมายชัย", "จารุกิตติ์ อุดมไพร", "ธัญญารัตน์ พรมบุญ", "ปัณฑิตา วงษ์ทับซ้าย", "ปัทฐวี นันจันทึก", "พีระพงษ์ บูระพันธ์", "ภูธเนศ คชวงศ์"],
+            "ชก.3/2": ["ภูรินท์ อัมภวา", "วิทวัส บุญนาม", "วีรภาพ ผุริจันทร์", "ศิวกร ทองยศ", "สิรวิชญ์ ทุมสวัสดิ์", "อาทิยะ จำปาบุรี", "กรวิชญ์ เรื่องแก้ว", "ณัฐวัฒน์ มีแก้ว"],
+            "สพผ.1/1": ["กิตติพัฒน์ พูลเขตวิทย์", "คุณากร ศรีรักษา", "จิรพนธ์ ประกอบศรี", "จิรสิน ครองเมือง", "ณัฐอกรณ์ โพธิเสน", "ธนกร ลามสีดา", "ธนโชติ สะออนรัมย์", "วสุนันท์ ธรรมเลิศ", "วิทศญานิล ชาวแสน", "อดิศักดิ์ ไชยอยู่", "อัครพนธ์ วิสัย", "เทวพร ศรียอด", "วีรวัฒน์ พรมรัตน์", "ศุภณัฐ ปัสสาพันธุ์", "เอกราช มหาพรม", "พลอยไพลิน พานทอง", "นิธิศ เพชรอุเทน", "ศิวกร คันธี"],
+            "สพผ.1/2": ["ธีรพงษ์ มะลัย", "สุคนธ์ทาทิพย์ พงษ์พิลา", "ศิวกร บัวทอง", "ศิวศักดิ์ บัวทอง", "อนุวงศ์ ศรีสรช้าย", "วัชรพล บุญยืด"],
+            "สพผ.2/1": ["จิรายุ ทองศักดิ์สิทธิ์", "ณัฐวุฒิ ลุนศรี", "เตวิช ชินนะโชติ", "ธนาคิม ทองหล่อ", "นิธิกร กรมดี", "ปฏิพัทธ์ รักษาวงษ์", "มินฐฎา ป้องกัน", "รัฐภูมิ น้อยอ่อนโพธิ์", "ศรนารายณ์ เพชรแสง", "อมร วิบูลย์อรรถ", "สิริณภัทร มหาพรม", "สิริวรรณ จันทร์แจ่ม", "ศักดินนท์ แก้วทรัพย์"],
+            "สพผ.2/2": ["ฐิตินา ภู่สะอาด", "ธนดล รักวิจิตต์", "ศิวกร อุ่นคำ", "ศุภกรณ์ บุญพงษ์", "นริศรา เดชสร", "สุรารักษ์ โพธิมน", "ธนกฤต วรสาร", "พิมพิกา ยงยุทธ", "ณัฐพนธ์ เหล่าเวียง", "ธนพล ศรีบุญเรือง", "เฉลิมชัย ชีวะโต", "ธนาเทพ แข็งขัน", "วิศรุต ยอดศิริ", "ณัฐพล อ่อนเม็ก"],
+            "สพผ.2/3": ["จีระพัฒนา สีเลิศ", "นพดล ดวงประทิป", "พิชัยยุทธ ผิวเหลือง", "นฤเทพ ค่อนดี"]
+        };
+
+        // Local Storage / State Data
+        let assignments = JSON.parse(localStorage.getItem('kru_assignments')) || [
+            { id: 1, subject: subjects[0], title: "ใบงานที่ 1: วงจรนิวแมติกส์เบื้องต้น", score: 10 },
+            { id: 2, subject: subjects[1], title: "ใบงานที่ 1: การเขียนแบบ 2D AutoCAD", score: 10 }
+        ];
+
+        let submissions = JSON.parse(localStorage.getItem('kru_submissions')) || [];
+        let attendance = JSON.parse(localStorage.getItem('kru_attendance')) || {};
+
+        // App Functions
+        function initApp() {
+            // Populate Dropdowns
+            const stdSub = document.getElementById('std-subject');
+            const stdGrp = document.getElementById('std-group');
+            const chkGrp = document.getElementById('chk-group');
+            const grdSub = document.getElementById('grade-subject');
+            const grdGrp = document.getElementById('grade-group');
+            const attSub = document.getElementById('att-subject');
+            const attGrp = document.getElementById('att-group');
+            const addSub = document.getElementById('add-assign-subject');
+            const repSub = document.getElementById('report-subject');
+            const repGrp = document.getElementById('report-group');
+
+            subjects.forEach(s => {
+                stdSub.add(new Option(s, s));
+                grdSub.add(new Option(s, s));
+                attSub.add(new Option(s, s));
+                addSub.add(new Option(s, s));
+                repSub.add(new Option(s, s));
+            });
+
+            Object.keys(studentGroups).forEach(g => {
+                stdGrp.add(new Option(g, g));
+                chkGrp.add(new Option(g, g));
+                grdGrp.add(new Option(g, g));
+                attGrp.add(new Option(g, g));
+                repGrp.add(new Option(g, g));
+            });
+
+            // Set current date
+            document.getElementById('att-date').valueToDate = new Date();
+            document.getElementById('att-date').value = new Date().toISOString().substring(0, 10);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = '✓ ' + (msg || 'บันทึกข้อมูลเสร็จสิ้นแล้ว!');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        function switchMode(mode) {
+            document.getElementById('btn-mode-student').classList.toggle('active', mode === 'student');
+            document.getElementById('btn-mode-teacher').classList.toggle('active', mode === 'teacher');
+            document.getElementById('student-view').style.display = mode === 'student' ? 'block' : 'none';
+            document.getElementById('teacher-view').style.display = mode === 'teacher' ? 'block' : 'none';
+        }
+
+        function switchStudentTab(tab) {
+            document.querySelectorAll('#student-view .tab-btn').forEach((b, i) => b.classList.toggle('active', (i===0 && tab==='submit') || (i===1 && tab==='summary')));
+            document.getElementById('student-tab-submit').style.display = tab === 'submit' ? 'block' : 'none';
+            document.getElementById('student-tab-summary').style.display = tab === 'summary' ? 'block' : 'none';
+        }
+
+        function switchTeacherTab(tab) {
+            const tabs = ['grading', 'attendance', 'manage', 'report'];
+            document.querySelectorAll('#teacher-panel .tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
+            tabs.forEach(t => {
+                document.getElementById('teacher-tab-' + t).style.display = t === tab ? 'block' : 'none';
+            });
+
+            if(tab === 'grading') renderGradingTable();
+            if(tab === 'attendance') renderAttendanceTable();
+            if(tab === 'manage') renderAssignmentManageTable();
+            if(tab === 'report') renderReportTable();
+        }
+
+        function verifyPin() {
+            const pin = document.getElementById('teacher-pin').value;
+            if(pin === '7778') {
+                document.getElementById('teacher-auth').style.display = 'none';
+                document.getElementById('teacher-panel').style.display = 'block';
+                renderGradingTable();
+            } else {
+                alert('รหัสผ่านไม่ถูกต้อง! (รหัสคือ 7778)');
+            }
+        }
+
+        function updateStudentList() {
+            const grp = document.getElementById('std-group').value;
+            const select = document.getElementById('std-name');
+            select.innerHTML = '<option value="">-- เลือกชื่อนักเรียน --</option>';
+            if(studentGroups[grp]) {
+                studentGroups[grp].forEach(s => select.add(new Option(s, s)));
+            }
+        }
+
+        function updateCheckStudentList() {
+            const grp = document.getElementById('chk-group').value;
+            const select = document.getElementById('chk-student');
+            select.innerHTML = '<option value="">-- เลือกชื่อนักเรียน --</option>';
+            if(studentGroups[grp]) {
+                studentGroups[grp].forEach(s => select.add(new Option(s, s)));
+            }
+        }
+
+        function updateAssignmentList() {
+            const sub = document.getElementById('std-subject').value;
+            const select = document.getElementById('std-assignment');
+            select.innerHTML = '<option value="">-- เลือกใบงาน --</option>';
+            assignments.filter(a => a.subject === sub).forEach(a => {
+                select.add(new Option(a.title, a.title));
+            });
+        }
+
+        function handleFilePreview(e) {
+            const files = e.target.files;
+            const count = document.getElementById('file-count');
+            const container = document.getElementById('preview-container');
+            container.innerHTML = '';
+
+            if(files.length > 15) {
+                alert('แนบไฟล์ได้สูงสุดไม่เกิน 15 ไฟล์ครับ');
+                e.target.value = '';
+                count.innerText = 'แนบแล้ว 0 / 15 ไฟล์';
+                return;
+            }
+
+            count.innerText = `แนบแล้ว ${files.length} / 15 ไฟล์`;
+            Array.from(files).forEach(file => {
+                if(file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = 'preview-item';
+                    container.appendChild(img);
+                } else {
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.style.background = '#e2e8f0';
+                    div.style.display = 'flex';
+                    div.style.alignItems = 'center';
+                    div.style.justifyContent = 'center';
+                    div.style.fontSize = '10px';
+                    div.innerText = '📄 PDF';
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function handleStudentSubmit(e) {
+            e.preventDefault();
+            const files = document.getElementById('std-files').files;
+            if(files.length === 0) {
+                alert('กรุณาแนบไฟล์อย่างน้อย 1 ไฟล์');
+                return;
+            }
+
+            const newSub = {
+                id: Date.now(),
+                subject: document.getElementById('std-subject').value,
+                group: document.getElementById('std-group').value,
+                student: document.getElementById('std-name').value,
+                assignment: document.getElementById('std-assignment').value,
+                filesCount: files.length,
+                time: new Date().toLocaleString('th-TH'),
+                score: null
+            };
+
+            submissions.push(newSub);
+            localStorage.setItem('kru_submissions', JSON.stringify(submissions));
+            showToast('ส่งใบงานเรียบร้อยแล้ว!');
+            document.getElementById('student-submit-form').reset();
+            document.getElementById('preview-container').innerHTML = '';
+            document.getElementById('file-count').innerText = 'แนบแล้ว 0 / 15 ไฟล์';
+        }
+
+        function addNewAssignment() {
+            const sub = document.getElementById('add-assign-subject').value;
+            const title = document.getElementById('add-assign-title').value;
+            const score = document.getElementById('add-assign-score').value;
+
+            if(!title) { alert('กรุณากรอกชื่อใบงาน'); return; }
+
+            assignments.push({ id: Date.now(), subject: sub, title: title, score: Number(score) });
+            localStorage.setItem('kru_assignments', JSON.stringify(assignments));
+            showToast('เพิ่มใบงานเรียบร้อยแล้ว!');
+            document.getElementById('add-assign-title').value = '';
+            renderAssignmentManageTable();
+        }
+
+        function deleteAssignment(id) {
+            if(confirm('คุณครูต้องการลบใบงานนี้ใช่หรือไม่?')) {
+                assignments = assignments.filter(a => a.id !== id);
+                localStorage.setItem('kru_assignments', JSON.stringify(assignments));
+                showToast('ลบใบงานเสร็จสิ้นแล้ว');
+                renderAssignmentManageTable();
+            }
+        }
+
+        function renderAssignmentManageTable() {
+            const tbody = document.getElementById('assignment-manage-tbody');
+            tbody.innerHTML = '';
+            assignments.forEach(a => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${a.subject}</td>
+                    <td>${a.title}</td>
+                    <td>${a.score} คะแนน</td>
+                    <td><button class="btn btn-danger" onclick="deleteAssignment(${a.id})" style="padding: 4px 8px; font-size: 12px;">🗑️ ลบ</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderGradingTable() {
+            const sub = document.getElementById('grade-subject').value;
+            const grp = document.getElementById('grade-group').value;
+            const tbody = document.getElementById('grading-tbody');
+            tbody.innerHTML = '';
+
+            const list = submissions.filter(s => s.subject === sub && s.group === grp);
+            if(list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">ไม่พบรายการส่งงาน</td></tr>';
+                return;
+            }
+
+            list.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${s.student}</td>
+                    <td>${s.assignment}</td>
+                    <td>📎 ${s.filesCount} ไฟล์</td>
+                    <td>${s.time}</td>
+                    <td><input type="number" id="score-${s.id}" value="${s.score !== null ? s.score : ''}" placeholder="คะแนน" style="width: 70px; padding: 4px;"></td>
+                    <td><button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;" onclick="saveScore(${s.id})">💾 บันทึก</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function saveScore(id) {
+            const score = document.getElementById('score-' + id).value;
+            const idx = submissions.findIndex(s => s.id === id);
+            if(idx !== -1) {
+                submissions[idx].score = Number(score);
+                localStorage.setItem('kru_submissions', JSON.stringify(submissions));
+                showToast('บันทึกคะแนนเสร็จสิ้นแล้ว!');
+            }
+        }
+
+        function renderAttendanceTable() {
+            const grp = document.getElementById('att-group').value;
+            const tbody = document.getElementById('attendance-tbody');
+            tbody.innerHTML = '';
+
+            if(!studentGroups[grp]) return;
+
+            studentGroups[grp].forEach((std, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td>${std}</td>
+                    <td>
+                        <select class="form-control att-status" data-student="${std}" style="width: auto; display: inline-block;">
+                            <option value="มา">✅ มาเรียน</option>
+                            <option value="สาย">💛 สาย</option>
+                            <option value="ขาด">❌ ขาดเรียน</option>
+                            <option value="ลา">🟦 ลา</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function saveAttendance() {
+            const date = document.getElementById('att-date').value;
+            const sub = document.getElementById('att-subject').value;
+            const grp = document.getElementById('att-group').value;
+
+            if(!attendance[sub]) attendance[sub] = {};
+            if(!attendance[sub][grp]) attendance[sub][grp] = {};
+            if(!attendance[sub][grp][date]) attendance[sub][grp][date] = {};
+
+            document.querySelectorAll('.att-status').forEach(sel => {
+                attendance[sub][grp][date][sel.dataset.student] = sel.value;
+            });
+
+            localStorage.setItem('kru_attendance', JSON.stringify(attendance));
+            showToast('บันทึกการเช็คชื่อเสร็จสิ้นแล้ว!');
+        }
+
+        function renderReportTable() {
+            const sub = document.getElementById('report-subject').value;
+            const grp = document.getElementById('report-group').value;
+            const tbody = document.getElementById('report-tbody');
+            tbody.innerHTML = '';
+
+            if(!studentGroups[grp]) return;
+
+            const datesData = attendance[sub] && attendance[sub][grp] ? attendance[sub][grp] : {};
+            const totalDays = Object.keys(datesData).length || 1; // Default 1 to prevent /0
+
+            studentGroups[grp].forEach((std, i) => {
+                let absentCount = 0;
+                let presentCount = 0;
+
+                Object.keys(datesData).forEach(d => {
+                    if(datesData[d][std] === 'ขาด') absentCount++;
+                    if(datesData[d][std] === 'มา') presentCount++;
+                });
+
+                const absentPercent = ((absentCount / totalDays) * 100).toFixed(1);
+                const isNoExam = absentPercent > 20;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td>${std}</td>
+                    <td>${presentCount}</td>
+                    <td>${absentCount}</td>
+                    <td><strong>${absentPercent}%</strong></td>
+                    <td>${isNoExam ? '<span class="badge badge-danger">❌ หมดสิทธิ์สอบ</span>' : '<span class="badge badge-success">✅ มีสิทธิ์สอบ</span>'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderStudentPersonalSummary() {
+            const std = document.getElementById('chk-student').value;
+            const result = document.getElementById('personal-summary-result');
+            if(!std) { result.innerHTML = ''; return; }
+
+            const mySubmissions = submissions.filter(s => s.student === std);
+            
+            let html = `<h4 style="margin-bottom: 12px;">ประวัติการส่งงานของ: ${std}</h4>`;
+            if(mySubmissions.length === 0) {
+                html += `<p style="color: var(--text-muted);">ยังไม่มีประวัติการส่งงานในระบบ</p>`;
+            } else {
+                html += `
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>วิชา</th>
+                                <th>ใบงาน</th>
+                                <th>เวลาส่ง</th>
+                                <th>คะแนน</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                mySubmissions.forEach(s => {
+                    html += `
+                        <tr>
+                            <td>${s.subject}</td>
+                            <td>${s.assignment}</td>
+                            <td>${s.time}</td>
+                            <td>${s.score !== null ? `<span class="badge badge-success">${s.score} คะแนน</span>` : '<span class="badge badge-warning">รอตรวจ</span>'}</td>
+                        </tr>
+                    `;
+                });
+                html += `</tbody></table></div>`;
+            }
+
+            result.innerHTML = html;
+        }
+
+        // Run On Load
+        window.onload = initApp;
+    </script>
+</body>
+</html>
